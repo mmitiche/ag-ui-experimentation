@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>AG-UI HttpAgent Demo</title>
+    <style>
+      body { font-family: sans-serif; }
+      .user { color: #2563eb; }
+      .assistant { color: #16a34a; }
+      pre { background: #f4f4f5; padding: 8px; }
+    </style>
+  </head>
+  <body>
+    <h1>AG-UI conversation (HttpAgent)</h1>
+
+    <div id="chat"></div>
+
+    <input id="input" placeholder="Type a message…" />
+    <button id="send">Send</button>
+
+    <h3>Agent state</h3>
+    <pre id="state"></pre>
+
+    <h3>Raw AG-UI events</h3>
+    <pre id="events"></pre>
+
+    <script type="module" src="/main.js"></script>
+  </body>
+</html>

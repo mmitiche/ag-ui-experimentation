@@ -1,0 +1,14 @@
+{
+  "name": "ag-ui-client-vite",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite"
+  },
+  "dependencies": {
+    "@ag-ui/client": "^0.1.0"
+  },
+  "devDependencies": {
+    "vite": "^5.0.0"
+  }
+}

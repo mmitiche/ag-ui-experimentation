@@ -1,0 +1,9 @@
+{
+  "name": "ag-ui-chat-demo-server",
+  "type": "module",
+  "dependencies": {
+    "@ag-ui/core": "^0.0.44",
+    "cors": "^2.8.6",
+    "express": "^4.18.2"
+  }
+}
