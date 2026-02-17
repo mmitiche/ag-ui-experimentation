@@ -16,6 +16,14 @@ function id(prefix) {
   return `${prefix}_${Math.random().toString(16).slice(2)}_${Date.now()}`;
 }
 
+/**
+ * This endpoint matches what HttpAgent does by default:
+ * - POST JSON (RunAgentInput)
+ * - Accept: text/event-stream
+ * - Stream BaseEvent objects
+ *
+ * RunAgentInput shape is documented here. :contentReference[oaicite:4]{index=4}
+ */
 app.post("/orgs/:orgId/agents/:agentId/follow-up", async (req, res) => {
   const { orgId, agentId } = req.params;
   console.log(
@@ -52,9 +60,7 @@ app.post("/orgs/:orgId/agents/:agentId/follow-up", async (req, res) => {
     type: EventType.CUSTOM,
     name: "header",
     value: {
-      conversationId: threadId,
       contentFormat: "text/markdown",
-      followUpEnabled: true,
     },
     threadId,
     runId,
@@ -224,7 +230,9 @@ app.post("/orgs/:orgId/agents/:agentId/answer", async (req, res) => {
     type: EventType.CUSTOM,
     name: "header",
     value: {
+      conversationId: threadId,
       contentFormat: "text/markdown",
+      followUpEnabled: true,
     },
     threadId,
     runId,
