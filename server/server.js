@@ -16,14 +16,6 @@ function id(prefix) {
   return `${prefix}_${Math.random().toString(16).slice(2)}_${Date.now()}`;
 }
 
-/**
- * This endpoint matches what HttpAgent does by default:
- * - POST JSON (RunAgentInput)
- * - Accept: text/event-stream
- * - Stream BaseEvent objects
- *
- * RunAgentInput shape is documented here. :contentReference[oaicite:4]{index=4}
- */
 app.post("/orgs/:orgId/agents/:agentId/follow-up", async (req, res) => {
   const { orgId, agentId } = req.params;
   console.log(
@@ -71,10 +63,7 @@ app.post("/orgs/:orgId/agents/:agentId/follow-up", async (req, res) => {
   sseWrite(res, {
     type: EventType.STEP_STARTED,
     stepName: "searching",
-    threadId,
-    runId,
     timestamp: Date.now(),
-    messageId: messageId,
   });
 
   await new Promise((r) => setTimeout(r, 1500));
@@ -82,10 +71,7 @@ app.post("/orgs/:orgId/agents/:agentId/follow-up", async (req, res) => {
   sseWrite(res, {
     type: EventType.STEP_FINISHED,
     stepName: "searching",
-    threadId,
-    runId,
     timestamp: Date.now(),
-    messageId: messageId,
   });
 
   /** First Step ends: searching */
@@ -94,10 +80,7 @@ app.post("/orgs/:orgId/agents/:agentId/follow-up", async (req, res) => {
   sseWrite(res, {
     type: EventType.STEP_STARTED,
     stepName: "thinking",
-    threadId,
-    runId,
     timestamp: Date.now(),
-    messageId: messageId,
   });
 
   await new Promise((r) => setTimeout(r, 1500));
@@ -106,17 +89,12 @@ app.post("/orgs/:orgId/agents/:agentId/follow-up", async (req, res) => {
   sseWrite(res, {
     type: EventType.STEP_FINISHED,
     stepName: "thinking",
-    threadId,
-    runId,
     timestamp: Date.now(),
-    messageId: messageId,
   });
 
   /** Message starts */
   sseWrite(res, {
     type: EventType.TEXT_MESSAGE_START,
-    threadId,
-    runId,
     timestamp: Date.now(),
     messageId: messageId,
   });
@@ -127,8 +105,6 @@ app.post("/orgs/:orgId/agents/:agentId/follow-up", async (req, res) => {
     if (!chunk) continue; // skip empty chunks
     sseWrite(res, {
       type: EventType.TEXT_MESSAGE_CONTENT,
-      threadId,
-      runId,
       timestamp: Date.now(),
       messageId: messageId,
       delta: chunk,
@@ -137,8 +113,6 @@ app.post("/orgs/:orgId/agents/:agentId/follow-up", async (req, res) => {
 
   sseWrite(res, {
     type: EventType.TEXT_MESSAGE_END,
-    threadId,
-    runId,
     timestamp: Date.now(),
     messageId: messageId,
   });
@@ -177,8 +151,6 @@ app.post("/orgs/:orgId/agents/:agentId/follow-up", async (req, res) => {
         },
       ],
     },
-    threadId,
-    runId,
     timestamp: Date.now(),
   });
   /** Citations ends */
@@ -234,8 +206,6 @@ app.post("/orgs/:orgId/agents/:agentId/answer", async (req, res) => {
       contentFormat: "text/markdown",
       followUpEnabled: true,
     },
-    threadId,
-    runId,
     timestamp: Date.now(),
   });
 
@@ -243,10 +213,7 @@ app.post("/orgs/:orgId/agents/:agentId/answer", async (req, res) => {
   sseWrite(res, {
     type: EventType.STEP_STARTED,
     stepName: "searching",
-    threadId,
-    runId,
     timestamp: Date.now(),
-    messageId: messageId,
   });
 
   await new Promise((r) => setTimeout(r, 1500));
@@ -254,10 +221,7 @@ app.post("/orgs/:orgId/agents/:agentId/answer", async (req, res) => {
   sseWrite(res, {
     type: EventType.STEP_FINISHED,
     stepName: "searching",
-    threadId,
-    runId,
     timestamp: Date.now(),
-    messageId: messageId,
   });
 
   /** First Step ends: searching */
@@ -266,10 +230,7 @@ app.post("/orgs/:orgId/agents/:agentId/answer", async (req, res) => {
   sseWrite(res, {
     type: EventType.STEP_STARTED,
     stepName: "thinking",
-    threadId,
-    runId,
     timestamp: Date.now(),
-    messageId: messageId,
   });
 
   await new Promise((r) => setTimeout(r, 1500));
@@ -278,19 +239,7 @@ app.post("/orgs/:orgId/agents/:agentId/answer", async (req, res) => {
   sseWrite(res, {
     type: EventType.STEP_FINISHED,
     stepName: "thinking",
-    threadId,
-    runId,
     timestamp: Date.now(),
-    messageId: messageId,
-  });
-
-  /** Message starts */
-  sseWrite(res, {
-    type: EventType.TEXT_MESSAGE_START,
-    threadId,
-    runId,
-    timestamp: Date.now(),
-    messageId: messageId,
   });
 
   const chunks = agentReply.split(/(\n)/);
@@ -298,23 +247,12 @@ app.post("/orgs/:orgId/agents/:agentId/answer", async (req, res) => {
     await new Promise((r) => setTimeout(r, 50));
     if (!chunk) continue; // skip empty chunks
     sseWrite(res, {
-      type: EventType.TEXT_MESSAGE_CONTENT,
-      threadId,
-      runId,
+      type: EventType.TEXT_MESSAGE_CHUNK,
       timestamp: Date.now(),
       messageId: messageId,
       delta: chunk,
     });
   }
-
-  sseWrite(res, {
-    type: EventType.TEXT_MESSAGE_END,
-    threadId,
-    runId,
-    timestamp: Date.now(),
-    messageId: messageId,
-  });
-  /** Message ends */
 
   /** Citations starts */
   sseWrite(res, {
@@ -349,8 +287,6 @@ app.post("/orgs/:orgId/agents/:agentId/answer", async (req, res) => {
         },
       ],
     },
-    threadId,
-    runId,
     timestamp: Date.now(),
   });
   /** Citations ends */
